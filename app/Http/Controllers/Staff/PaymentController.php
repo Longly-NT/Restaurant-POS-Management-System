@@ -59,37 +59,5 @@ class PaymentController extends Controller
         return back()->with('status', 'Payment recorded.');
     }
 
-    public function splitEvenly(Request $request, Order $order)
-    {
-        $data = $request->validate([
-            'splits' => ['required', 'integer', 'min:2', 'max:20'],
-            'method' => ['required', 'in:cash,card,mobile'],
-        ]);
-
-        $remaining = $order->balanceDue();
-        $each = round($remaining / $data['splits'], 2);
-
-        for ($i = 1; $i <= $data['splits']; $i++) {
-            $amount = $i === $data['splits']
-                ? round($remaining - ($each * ($data['splits'] - 1)), 2)
-                : $each;
-
-            // Updated to match your new schema properties
-            $order->payments()->create([
-                'subtotal_amount' => $amount,
-                'total_amount'    => $amount,
-                'payment_method'  => $data['method'],
-                'processed_by'    => auth()->id(),
-                'tax_amount'      => 0.00,
-                'tip_amount'      => 0.00,
-                'discount_amount' => 0.00,
-                'refund_amount'   => 0.00,
-            ]);
-        }
-
-        $order->update(['status' => 'paid']);
-        $order->diningTable->update(['status' => 'available']);
-
-        return back()->with('status', 'Bill split and marked as paid.');
-    }
+   
 }

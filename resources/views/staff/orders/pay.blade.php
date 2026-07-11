@@ -124,29 +124,7 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm">
-                <div class="card-header">Split Bill Evenly</div>
-                <div class="card-body">
-                    <form method="POST" action="{{ route('staff.orders.split', $order) }}">
-                        @csrf
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <label class="form-label">Number of guests</label>
-                                <input type="number" name="splits" min="2" max="20" value="2" class="form-control" required>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label">Method</label>
-                                <select name="method" class="form-select" required>
-                                    <option value="cash">Cash</option>
-                                    <option value="card">Card</option>
-                                    <option value="mobile">Mobile</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button class="btn btn-outline-dark w-100 mt-3">Split & Mark Paid</button>
-                    </form>
-                </div>
-            </div>
+          
         @else
             <div class="alert alert-success">This order is fully paid. Table is now free.</div>
         @endif
