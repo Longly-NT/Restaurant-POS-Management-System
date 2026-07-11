@@ -37,6 +37,13 @@ class DatabaseSeeder extends Seeder
             'role' => 'chef',
         ]);
 
+        User::create([
+            'name' => 'Manager Kim',
+            'email' => 'manager@pos.test',
+            'password' => Hash::make('password'),
+            'role' => 'manager',
+        ]);
+
         foreach (range(1, 8) as $i) {
             DiningTable::create([
                 'name' => 'Table '.$i,

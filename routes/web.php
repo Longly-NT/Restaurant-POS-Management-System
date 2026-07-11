@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Chef\OrderController as ChefOrderController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Staff\OrderController as StaffOrderController;
 use App\Http\Controllers\Staff\PaymentController;
 use App\Http\Controllers\Staff\TableController;
@@ -21,8 +22,8 @@ Route::get('/login', [LoginController::class, 'create'])->name('login')->middlew
 Route::post('/login', [LoginController::class, 'store'])->middleware('guest');
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
 
-// Admin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+// Admin & Manager (Accessible via the /admin/ prefix)
+Route::middleware(['auth', 'role:admin,manager'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('users', [UserController::class, 'index'])->name('users.index');
@@ -45,10 +46,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+
+    Route::get('reports', [ReportController::class, 'dailySummary'])->name('reports.index');
+    Route::get('reports/transactions', [ReportController::class, 'transactions'])->name('reports.transactions');
 });
 
 // Staff
-Route::middleware(['auth', 'role:staff,admin'])->prefix('staff')->name('staff.')->group(function () {
+Route::middleware(['auth', 'role:staff,admin,manager'])->prefix('staff')->name('staff.')->group(function () {
     Route::get('tables', [TableController::class, 'index'])->name('tables.index');
     Route::post('tables/{table}/open', [StaffOrderController::class, 'openForTable'])->name('tables.open');
 
@@ -65,9 +69,14 @@ Route::middleware(['auth', 'role:staff,admin'])->prefix('staff')->name('staff.')
 });
 
 // Chef
-Route::middleware(['auth', 'role:chef,admin'])->prefix('chef')->name('chef.')->group(function () {
+Route::middleware(['auth', 'role:chef,admin,manager'])->prefix('chef')->name('chef.')->group(function () {
     Route::get('orders', [ChefOrderController::class, 'index'])->name('orders.index');
     Route::post('orders/{order}/accept', [ChefOrderController::class, 'accept'])->name('orders.accept');
     Route::post('orders/{order}/preparing', [ChefOrderController::class, 'preparing'])->name('orders.preparing');
     Route::post('orders/{order}/finished', [ChefOrderController::class, 'finished'])->name('orders.finished');
+});
+
+// Catch-all Redirect for old Manager URL legacy links
+Route::get('/manager/dashboard', function () {
+    return redirect()->route('admin.dashboard');
 });

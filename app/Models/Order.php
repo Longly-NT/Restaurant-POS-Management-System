@@ -33,6 +33,7 @@ class Order extends Model
         return $this->belongsTo(DiningTable::class);
     }
 
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -56,7 +57,7 @@ class Order extends Model
 
     public function amountPaid(): float
     {
-        return (float) $this->payments()->sum('amount');
+        return (float) $this->payments()->sum('total_amount');
     }
 
     public function balanceDue(): float

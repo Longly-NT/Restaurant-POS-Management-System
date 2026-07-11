@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 use App\Models\DiningTable;
 use App\Models\MenuItem;
 use App\Models\Order;
-use App\Models\Payment;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -22,8 +21,6 @@ class DashboardController extends Controller
 
         $recentOrders = Order::with(['diningTable', 'user'])->latest()->take(10)->get();
 
-        $todaySales = Payment::summaryForDate(now()->toDateString());
-
-        return view('admin.dashboard', compact('stats', 'recentOrders', 'todaySales'));
+        return view('manager.dashboard', compact('stats', 'recentOrders'));
     }
 }

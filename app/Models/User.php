@@ -47,6 +47,12 @@ class User extends Authenticatable
         return $this->role === 'chef';
     }
 
+     public function isManager(): bool
+    {
+        return $this->role === 'manager';
+    }
+
+
     public function orders()
     {
         return $this->hasMany(Order::class);

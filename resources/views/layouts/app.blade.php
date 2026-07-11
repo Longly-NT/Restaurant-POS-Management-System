@@ -26,12 +26,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav me-auto">
-                    @if(auth()->user()->isAdmin())
+                    @if(auth()->user()->isAdmin() || auth()->user()->isManager())
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.users.index') }}">Staff</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.categories.index') }}">Categories</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.menu-items.index') }}">Menu</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('admin.orders.index') }}">Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('admin.reports.index') }}">Reports</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('staff.tables.index') }}">Tables (Staff view)</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('chef.orders.index') }}">Kitchen (Chef view)</a></li>
                     @elseif(auth()->user()->isStaff())

@@ -33,6 +33,7 @@
                     <li>admin@pos.test</li>
                     <li>staff@pos.test</li>
                     <li>chef@pos.test</li>
+                    <li>manager@pos.test</li>
                 </ul>
             </div>
         </div>
