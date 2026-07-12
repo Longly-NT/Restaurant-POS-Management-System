@@ -85,11 +85,17 @@
 
 <div class="row g-4">
     <div class="col-lg-7">
-        @if($order->status === 'open')
+        @if(! in_array($order->status, ['paid', 'cancelled']))
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Menu</span>
-                    <span class="text-muted small fw-normal">Adding the same dish bumps its quantity</span>
+                    <span class="text-muted small fw-normal">
+                        @if($order->status === 'open')
+                            Adding the same dish bumps its quantity
+                        @else
+                            <i class="bi bi-lightning-charge-fill text-warning"></i> Extra items fire straight to the kitchen
+                        @endif
+                    </span>
                 </div>
                 <div class="card-body menu-scroll">
                     @forelse($categories as $category)
@@ -136,7 +142,7 @@
                 </div>
             </div>
         @else
-            <div class="alert alert-info">This order has been sent and can no longer be edited here.</div>
+            <div class="alert alert-secondary">This order is {{ $order->status }} and can no longer be changed.</div>
         @endif
     </div>
 
@@ -157,7 +163,7 @@
                         </div>
                         <div class="text-end">
                             <div class="ticket-sub">${{ number_format($item->subtotal(), 2) }}</div>
-                            @if($order->status === 'open')
+                            @if(! in_array($order->status, ['paid', 'cancelled']))
                                 <form method="POST" action="{{ route('staff.orders.items.destroy', [$order, $item]) }}" onsubmit="return confirm('Remove {{ $item->menuItem->name }}?')" class="mt-1">
                                     @csrf @method('DELETE')
                                     <button class="btn-icon" title="Remove"><i class="bi bi-trash"></i></button>

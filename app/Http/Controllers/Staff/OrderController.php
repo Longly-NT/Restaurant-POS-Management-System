@@ -54,7 +54,7 @@ class OrderController extends Controller
 
     public function addItem(Request $request, Order $order)
     {
-        $this->guardEditable($order);
+        $this->guardOpenForItems($order);
 
         $data = $request->validate([
             'menu_item_id' => ['required', 'exists:menu_items,id'],
@@ -86,12 +86,26 @@ class OrderController extends Controller
 
         $order->recalculateTotal();
 
+        // If the order was already sent, staff is adding extra items mid-service.
+        // Re-fire the ticket straight to the kitchen — no chef approval needed.
+        if ($order->status !== 'open') {
+            $order->update([
+                'status' => 'sent_to_kitchen',
+                'sent_to_kitchen_at' => now(),
+                'accepted_at' => null,
+                'finished_at' => null,
+                'served_at' => null,
+            ]);
+
+            return back()->with('status', 'Item added and fired to the kitchen.');
+        }
+
         return back()->with('status', 'Item added.');
     }
 
     public function removeItem(Order $order, OrderItem $item)
     {
-        $this->guardEditable($order);
+        $this->guardOpenForItems($order);
 
         abort_unless($item->order_id === $order->id, 404);
 
@@ -130,5 +144,14 @@ class OrderController extends Controller
     protected function guardEditable(Order $order): void
     {
         abort_unless($order->status === 'open', 422, 'This order can no longer be edited.');
+    }
+
+    /**
+     * Items may be added/removed for the whole life of the order until it is
+     * settled — staff can keep ordering more even after it has gone to the kitchen.
+     */
+    protected function guardOpenForItems(Order $order): void
+    {
+        abort_if(in_array($order->status, ['paid', 'cancelled']), 422, 'This order is closed.');
     }
 }
