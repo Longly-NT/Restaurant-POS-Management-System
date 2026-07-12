@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\MenuItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MenuItemController extends Controller
 {
@@ -24,9 +25,15 @@ class MenuItemController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
         $data['is_available'] = true;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('menu-items', 'public');
+            $data['image'] = $imagePath;
+        }
 
         MenuItem::create($data);
 
@@ -40,7 +47,23 @@ class MenuItemController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
+
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if (!empty($menuItem->image) && $menuItem->image !== null) {
+                try {
+                    Storage::disk('public')->delete($menuItem->image);
+                } catch (\Exception $e) {
+                    // Log but don't fail if old image can't be deleted
+                    \Log::warning('Failed to delete old image: ' . $e->getMessage());
+                }
+            }
+            // Store new image
+            $imagePath = $request->file('image')->store('menu-items', 'public');
+            $data['image'] = $imagePath;
+        }
 
         $menuItem->update($data);
 
@@ -56,6 +79,14 @@ class MenuItemController extends Controller
 
     public function destroy(MenuItem $menuItem)
     {
+        if (!empty($menuItem->image) && $menuItem->image !== null) {
+            try {
+                Storage::disk('public')->delete($menuItem->image);
+            } catch (\Exception $e) {
+                // Log but don't fail if image can't be deleted
+                \Log::warning('Failed to delete image: ' . $e->getMessage());
+            }
+        }
         $menuItem->delete();
 
         return back()->with('status', 'Menu item removed.');
