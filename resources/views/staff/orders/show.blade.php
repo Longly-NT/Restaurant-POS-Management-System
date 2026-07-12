@@ -28,16 +28,35 @@
                             <div class="row g-2 mb-3">
                                 @foreach($category->menuItems as $menuItem)
                                     <div class="col-6">
-                                        <form method="POST" action="{{ route('staff.orders.items.store', $order) }}" class="border rounded p-2 h-100 d-flex flex-column justify-content-between">
+                                        <form method="POST" action="{{ route('staff.orders.items.store', $order) }}" class="border rounded overflow-hidden h-100 d-flex flex-column">
                                             @csrf
                                             <input type="hidden" name="menu_item_id" value="{{ $menuItem->id }}">
-                                            <div>
-                                                <div class="fw-semibold">{{ $menuItem->name }}</div>
-                                                <div class="text-muted small">${{ number_format($menuItem->price, 2) }}</div>
-                                            </div>
-                                            <div class="d-flex gap-1 mt-2">
-                                                <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="width:65px">
-                                                <button class="btn btn-sm btn-dark flex-fill">Add</button>
+                                            
+                                            <!-- Image -->
+                                            @if($menuItem->image_path)
+                                                <img src="{{ asset('storage/' . $menuItem->image_path) }}"
+                                                     alt="{{ $menuItem->name }}"
+                                                     class="w-100"
+                                                     style="height: 180px; object-fit: cover;">
+                                            @else
+                                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+                                                    <span class="text-muted">No image</span>
+                                                </div>
+                                            @endif
+                                            
+                                            <!-- Content -->
+                                            <div class="p-2 flex-grow-1 d-flex flex-column justify-content-between">
+                                                <div>
+                                                    <div class="fw-semibold" style="font-size: 14px;">{{ $menuItem->name }}</div>
+                                                    <div class="text-muted small">{{ $menuItem->description }}</div>
+                                                    <div class="fw-bold mt-2">${{ number_format($menuItem->price, 2) }}</div>
+                                                </div>
+                                                
+                                                <!-- Input & Button -->
+                                                <div class="d-flex gap-1 mt-2">
+                                                    <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="width:60px">
+                                                    <button class="btn btn-sm btn-dark flex-fill">Add</button>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>

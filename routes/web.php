@@ -80,3 +80,5 @@ Route::middleware(['auth', 'role:chef,admin,manager'])->prefix('chef')->name('ch
 Route::get('/manager/dashboard', function () {
     return redirect()->route('admin.dashboard');
 });
+
+Route::patch('orders/{order}/items/{item}', [StaffOrderController::class, 'updateItemQuantity'])->name('staff.orders.items.update');

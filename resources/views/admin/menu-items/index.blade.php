@@ -2,6 +2,7 @@
 
 @section('title', 'Manage Menu')
 
+
 @section('content')
 @if(auth()->user()->role == 'admin')
     <h3 class="mb-3">Manage Menu</h3>
