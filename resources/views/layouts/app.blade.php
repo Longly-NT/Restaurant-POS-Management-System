@@ -167,6 +167,13 @@
         .badge.bg-danger { background-color: var(--danger) !important; }
         .badge.bg-secondary { background-color: #8B9088 !important; }
 
+        /* ---------- Guest (login) shell ---------- */
+        .guest-shell { min-height: 100vh; }
+        .guest-alerts {
+            position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+            z-index: 1080; width: min(92vw, 480px);
+        }
+
         /* ---------- Legacy classes kept for staff/tables/index.blade.php ---------- */
         .card-table { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
         .card-table:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
@@ -283,22 +290,25 @@
     </div>
 </div>
 @else
-    <div class="container-fluid px-4 pb-5">
-        @if (session('status'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('status') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="guest-shell">
+        @if (session('status') || $errors->any())
+            <div class="guest-alerts">
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <ul class="mb-0 ps-3">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
             </div>
         @endif
 

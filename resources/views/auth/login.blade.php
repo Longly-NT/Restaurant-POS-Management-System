@@ -1,42 +1,205 @@
 @extends('layouts.app')
 
-@section('title', 'Login - Restaurant POS')
+@section('title', 'Sign in · Restaurant POS')
+
+@section('styles')
+<style>
+    :root { --brass: #C9A24B; --brass-soft: #E4CE9A; }
+
+    .auth-wrap {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+    }
+
+    /* ---- Brand panel ---- */
+    .auth-brand {
+        position: relative;
+        overflow: hidden;
+        background:
+            radial-gradient(120% 90% at 15% 0%, #2f5436 0%, transparent 55%),
+            linear-gradient(160deg, var(--leaf-dark) 0%, var(--leaf-darker) 100%);
+        color: #fff;
+        padding: 56px 64px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    /* Faint concentric "plate" motif, purely decorative */
+    .auth-brand::after {
+        content: "";
+        position: absolute;
+        right: -160px; bottom: -160px;
+        width: 520px; height: 520px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,.06);
+        box-shadow:
+            0 0 0 60px rgba(255,255,255,.03),
+            0 0 0 130px rgba(255,255,255,.02);
+        pointer-events: none;
+    }
+    .auth-brand > * { position: relative; z-index: 1; }
+
+    .auth-monogram {
+        width: 54px; height: 54px;
+        border-radius: 15px;
+        background: rgba(255,255,255,.1);
+        border: 1px solid rgba(255,255,255,.16);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 20px; letter-spacing: 0;
+    }
+    .auth-eyebrow {
+        text-transform: uppercase;
+        letter-spacing: .22em;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--brass-soft);
+        margin-bottom: 18px;
+    }
+    .auth-headline {
+        font-size: clamp(2rem, 3.4vw, 3rem);
+        line-height: 1.08;
+        font-weight: 800;
+        letter-spacing: -.03em;
+        text-wrap: balance;
+        max-width: 12ch;
+        margin: 0;
+    }
+    .auth-headline em { color: var(--brass-soft); font-style: normal; }
+    .auth-sub {
+        margin-top: 20px;
+        color: rgba(255,255,255,.72);
+        max-width: 42ch;
+        line-height: 1.6;
+    }
+    .auth-brand-foot {
+        display: flex; gap: 28px;
+        color: rgba(255,255,255,.62);
+        font-size: 13px;
+    }
+    .auth-brand-foot .stat b { color: #fff; font-size: 15px; display: block; letter-spacing: -.01em; }
+    .auth-rule { width: 40px; height: 2px; background: var(--brass); border: 0; margin: 0 0 22px; opacity: .9; }
+
+    /* ---- Form panel ---- */
+    .auth-form-panel {
+        display: flex; align-items: center; justify-content: center;
+        padding: 40px 28px;
+        background: var(--bg);
+    }
+    .auth-card {
+        width: 100%; max-width: 400px;
+    }
+    .auth-card h1 { font-size: 1.6rem; margin-bottom: 4px; }
+    .auth-card .lede { color: var(--muted); margin-bottom: 28px; }
+
+    .auth-demo {
+        margin-top: 26px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: #fff;
+        overflow: hidden;
+    }
+    .auth-demo-head {
+        padding: 10px 14px;
+        font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+        color: var(--leaf-dark); background: var(--leaf-tint);
+    }
+    .auth-demo button {
+        display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        width: 100%; text-align: left;
+        padding: 10px 14px;
+        border: 0; border-top: 1px solid var(--border);
+        background: #fff; cursor: pointer;
+        font-size: 13.5px; color: var(--ink);
+        transition: background-color .12s ease;
+    }
+    .auth-demo button:first-of-type { border-top: 0; }
+    .auth-demo button:hover { background: var(--leaf-tint); }
+    .auth-demo .role { font-weight: 700; }
+    .auth-demo .email { color: var(--muted); font-family: ui-monospace, monospace; font-size: 12.5px; }
+    .auth-demo .use { color: var(--leaf); font-weight: 600; font-size: 12px; opacity: 0; transition: opacity .12s ease; }
+    .auth-demo button:hover .use { opacity: 1; }
+
+    @media (max-width: 860px) {
+        .auth-wrap { grid-template-columns: 1fr; }
+        .auth-brand { padding: 40px 32px; gap: 32px; }
+        .auth-headline { max-width: none; }
+        .auth-brand-foot { display: none; }
+    }
+</style>
+@endsection
 
 @section('content')
-<div class="row justify-content-center align-items-center" style="min-height: 90vh;">
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-1"><i class="bi bi-shop"></i> Restaurant POS</h3>
-                <p class="text-center text-muted mb-4">Sign in to continue</p>
+<div class="auth-wrap">
+    <aside class="auth-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="auth-monogram">V</div>
+            <span class="fw-bold" style="letter-spacing:-.01em;">Verdé&nbsp;POS</span>
+        </div>
 
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" class="form-control" required autofocus>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label" for="remember">Remember me</label>
-                    </div>
-                    <button type="submit" class="btn btn-dark w-100">Login</button>
-                </form>
+        <div>
+            <div class="auth-eyebrow">Front of house · Kitchen · Register</div>
+            <h1 class="auth-headline">One clean pass from <em>table to bill</em>.</h1>
+            <p class="auth-sub">
+                Take orders, fire tickets to the line, and settle the check — every
+                seat and every plate in one place. Sign in to pick up your shift.
+            </p>
+        </div>
 
-                <hr>
-                <p class="small text-muted mb-1">Demo accounts (password: <code>password</code>):</p>
-                <ul class="small text-muted mb-0">
-                    <li>admin@pos.test</li>
-                    <li>staff@pos.test</li>
-                    <li>chef@pos.test</li>
-                    <li>manager@pos.test</li>
-                </ul>
+        <div class="auth-brand-foot">
+            <div class="stat"><b>Tables</b> live floor map</div>
+            <div class="stat"><b>Kitchen</b> real-time queue</div>
+            <div class="stat"><b>Register</b> split & settle</div>
+        </div>
+    </aside>
+
+    <main class="auth-form-panel">
+        <div class="auth-card">
+            <hr class="auth-rule">
+            <h1>Welcome back</h1>
+            <p class="lede">Sign in to your Verdé POS account.</p>
+
+            <form method="POST" action="{{ route('login') }}" id="loginForm">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" value="{{ old('email') }}" class="form-control" required autofocus placeholder="you@pos.test">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required placeholder="••••••••">
+                </div>
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                    <label class="form-check-label" for="remember">Keep me signed in</label>
+                </div>
+                <button type="submit" class="btn btn-dark w-100 py-2">Sign in</button>
+            </form>
+
+            <div class="auth-demo">
+                <div class="auth-demo-head">Demo accounts · password <code style="color:inherit">password</code></div>
+                @foreach ([['Admin','admin@pos.test'], ['Manager','manager@pos.test'], ['Staff','staff@pos.test'], ['Chef','chef@pos.test']] as [$role, $email])
+                    <button type="button" class="js-demo" data-email="{{ $email }}">
+                        <span class="role">{{ $role }}</span>
+                        <span class="email">{{ $email }}</span>
+                        <span class="use">Use →</span>
+                    </button>
+                @endforeach
             </div>
         </div>
-    </div>
+    </main>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    // Click a demo account to prefill the form (password is the same for all).
+    document.querySelectorAll('.js-demo').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelector('input[name=email]').value = btn.dataset.email;
+            document.querySelector('input[name=password]').value = 'password';
+            document.querySelector('input[name=email]').focus();
+        });
+    });
+</script>
 @endsection

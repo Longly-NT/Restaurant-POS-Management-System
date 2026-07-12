@@ -63,13 +63,26 @@ class OrderController extends Controller
         ]);
 
         $menuItem = MenuItem::findOrFail($data['menu_item_id']);
+        $quantity = $data['quantity'] ?? 1;
+        $notes = $data['notes'] ?? null;
 
-        $order->items()->create([
-            'menu_item_id' => $menuItem->id,
-            'quantity' => $data['quantity'] ?? 1,
-            'price' => $menuItem->price,
-            'notes' => $data['notes'] ?? null,
-        ]);
+        // Merge with an existing line for the same menu item + notes instead of
+        // creating a duplicate row: just bump the quantity.
+        $existing = $order->items()
+            ->where('menu_item_id', $menuItem->id)
+            ->where('notes', $notes)
+            ->first();
+
+        if ($existing) {
+            $existing->increment('quantity', $quantity);
+        } else {
+            $order->items()->create([
+                'menu_item_id' => $menuItem->id,
+                'quantity' => $quantity,
+                'price' => $menuItem->price,
+                'notes' => $notes,
+            ]);
+        }
 
         $order->recalculateTotal();
 

@@ -11,10 +11,19 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\Staff\OrderController as StaffOrderController;
 use App\Http\Controllers\Staff\PaymentController;
 use App\Http\Controllers\Staff\TableController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect('/login');
+    if (! Auth::check()) {
+        return redirect()->route('login');
+    }
+
+    return redirect()->route(match (Auth::user()->role) {
+        'admin', 'manager' => 'admin.dashboard',
+        'chef' => 'chef.orders.index',
+        default => 'staff.tables.index',
+    });
 });
 
 // Auth

@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('menu_items', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('description');
-        });
+        if (! Schema::hasColumn('menu_items', 'image')) {
+            Schema::table('menu_items', function (Blueprint $table) {
+                $table->string('image')->nullable()->after('description');
+            });
+        }
     }
 
     public function down()
     {
-        Schema::table('menu_items', function (Blueprint $table) {
-            $table->dropColumn('image');
-        });
+        if (Schema::hasColumn('menu_items', 'image')) {
+            Schema::table('menu_items', function (Blueprint $table) {
+                $table->dropColumn('image');
+            });
+        }
     }
 };
