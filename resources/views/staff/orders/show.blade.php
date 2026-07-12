@@ -31,11 +31,10 @@
                                         <form method="POST" action="{{ route('staff.orders.items.store', $order) }}" class="border rounded overflow-hidden h-100 d-flex flex-column">
                                             @csrf
                                             <input type="hidden" name="menu_item_id" value="{{ $menuItem->id }}">
-<<<<<<< HEAD
-                                            
+
                                             <!-- Image -->
-                                            @if($menuItem->image_path)
-                                                <img src="{{ asset('storage/' . $menuItem->image_path) }}"
+                                            @if($menuItem->image)
+                                                <img src="{{ asset('storage/' . $menuItem->image) }}"
                                                      alt="{{ $menuItem->name }}"
                                                      class="w-100"
                                                      style="height: 180px; object-fit: cover;">
@@ -44,7 +43,7 @@
                                                     <span class="text-muted">No image</span>
                                                 </div>
                                             @endif
-                                            
+
                                             <!-- Content -->
                                             <div class="p-2 flex-grow-1 d-flex flex-column justify-content-between">
                                                 <div>
@@ -52,24 +51,12 @@
                                                     <div class="text-muted small">{{ $menuItem->description }}</div>
                                                     <div class="fw-bold mt-2">${{ number_format($menuItem->price, 2) }}</div>
                                                 </div>
-                                                
+
                                                 <!-- Input & Button -->
                                                 <div class="d-flex gap-1 mt-2">
                                                     <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="width:60px">
                                                     <button class="btn btn-sm btn-dark flex-fill">Add</button>
                                                 </div>
-=======
-                                            @if($menuItem->image)
-                                                <img src="{{ asset('storage/' . $menuItem->image) }}" alt="{{ $menuItem->name }}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">
-                                            @endif
-                                            <div>
-                                                <div class="fw-semibold small">{{ $menuItem->name }}</div>
-                                                <div class="text-muted small">${{ number_format($menuItem->price, 2) }}</div>
-                                            </div>
-                                            <div class="d-flex gap-1 mt-2">
-                                                <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="width:65px">
-                                                <button class="btn btn-sm btn-dark flex-fill">Add</button>
->>>>>>> ee920d02f4b03769bb5efa95c354d80a968c6c89
                                             </div>
                                         </form>
                                     </div>
