@@ -39,7 +39,7 @@ class Payment extends Model
     /** What the guest actually handed over for this one payment. */
     public function totalCollected(): float
     {
-        return round($this->amount - $this->discount_amount + $this->tax_amount + $this->tip_amount, 2);
+        return round($this->subtotal_amount - $this->discount_amount + $this->tax_amount + $this->tip_amount, 2);
     }
 
     /**

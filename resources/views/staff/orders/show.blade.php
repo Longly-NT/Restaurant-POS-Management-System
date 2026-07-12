@@ -31,8 +31,11 @@
                                         <form method="POST" action="{{ route('staff.orders.items.store', $order) }}" class="border rounded p-2 h-100 d-flex flex-column justify-content-between">
                                             @csrf
                                             <input type="hidden" name="menu_item_id" value="{{ $menuItem->id }}">
+                                            @if($menuItem->image)
+                                                <img src="{{ asset('storage/' . $menuItem->image) }}" alt="{{ $menuItem->name }}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">
+                                            @endif
                                             <div>
-                                                <div class="fw-semibold">{{ $menuItem->name }}</div>
+                                                <div class="fw-semibold small">{{ $menuItem->name }}</div>
                                                 <div class="text-muted small">${{ number_format($menuItem->price, 2) }}</div>
                                             </div>
                                             <div class="d-flex gap-1 mt-2">
