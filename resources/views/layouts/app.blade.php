@@ -35,8 +35,11 @@
         @view-transition { navigation: auto; }
         * { box-sizing: border-box; }
 
-        @keyframes pageFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .app-content, .guest-shell { animation: pageFadeIn .35s ease both; }
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+            animation-duration: .18s;
+            animation-timing-function: ease-out;
+        }
 
         body {
             background-color: var(--bg);
@@ -126,6 +129,38 @@
         }
         .app-content { padding: 26px 28px 48px; }
 
+        /* ---------- Responsive: tablet & mobile ---------- */
+        @media (max-width: 768px) {
+            .app-shell { flex-direction: column; }
+            .app-sidebar {
+                width: 100%; height: auto; position: sticky; top: 0; z-index: 20;
+                flex-direction: row; align-items: center;
+                padding: 10px 14px; gap: 6px;
+                overflow-x: auto;
+            }
+            .app-sidebar .brand { margin-bottom: 0; margin-right: 6px; flex-shrink: 0; }
+            .app-sidebar .nav-rail {
+                flex-direction: row; width: auto; gap: 4px;
+                overflow-x: auto; flex-shrink: 0;
+            }
+            .app-sidebar .nav-rail a {
+                flex-direction: row; width: auto; white-space: nowrap;
+                padding: 7px 10px; font-size: 11px;
+            }
+            .app-sidebar .nav-rail a svg { width: 18px; height: 18px; }
+            .app-sidebar .rail-spacer { display: none; }
+            .app-sidebar .rail-foot { flex-direction: row; width: auto; margin-left: auto; flex-shrink: 0; gap: 8px; }
+            .app-sidebar .logout-btn { flex-direction: row; width: auto; padding: 6px 8px; }
+            .app-sidebar .user-chip { width: 32px; height: 32px; font-size: 11px; }
+
+            .app-topbar { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+            .app-content { padding: 18px 16px 36px; }
+        }
+
+        @media (max-width: 480px) {
+            .app-topbar .role-pill { display: none; }
+        }
+
         /* ---------- Reusable components ---------- */
         .card {
             border: 1px solid var(--border);
@@ -172,6 +207,10 @@
         .badge.bg-success { background-color: var(--success) !important; }
         .badge.bg-danger { background-color: var(--danger) !important; }
         .badge.bg-secondary { background-color: #8B9088 !important; }
+        .badge.bg-info { background-color: var(--leaf) !important; }
+
+        .text-success { color: var(--success) !important; }
+        .text-danger { color: var(--danger) !important; }
 
         /* ---------- Guest (login) shell ---------- */
         .guest-shell { min-height: 100vh; }

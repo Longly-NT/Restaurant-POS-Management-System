@@ -51,21 +51,43 @@
     .qty input::-webkit-outer-spin-button, .qty input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
     /* Order ticket */
-    .ticket-line { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-top: 1px solid var(--border); }
+    .ticket-line {
+        display: flex; align-items: flex-start; gap: 10px; padding: 12px 8px; margin: 0 -8px;
+        border-top: 1px solid var(--border); border-radius: 10px;
+    }
     .ticket-line:first-child { border-top: 0; }
+
+    /* Quantity stepper (Current Order) */
+    .qty-stepper {
+        flex-shrink: 0; width: 34px; display: flex; flex-direction: column; align-items: stretch;
+        border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: #fff;
+    }
+    .qty-btn {
+        border: 0; background: #fff; color: var(--leaf-dark); height: 22px;
+        display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px;
+    }
+    .qty-btn:hover { background: var(--leaf-tint); }
+    .qty-btn:disabled { opacity: .5; cursor: default; }
+
+    .qty-num {
+        text-align: center; font-weight: 700; font-size: 13px;
+        height: 22px; line-height: 22px; padding: 0;
+        border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+        font-variant-numeric: tabular-nums;
+    }
     .ticket-qty {
         flex-shrink: 0; min-width: 30px; height: 30px; padding: 0 6px;
         border-radius: 8px; background: var(--leaf-tint); color: var(--leaf-dark);
         font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center;
         font-variant-numeric: tabular-nums;
     }
-    .ticket-name { font-weight: 600; font-size: 14px; }
-    .ticket-note { color: var(--muted); font-size: 12px; }
-    .ticket-sub { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .ticket-total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 2px solid var(--ink); margin-top: 4px; }
-    .ticket-total .amt { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-    .btn-icon { border: 1px solid var(--border); background:#fff; color: var(--muted); width: 30px; height: 30px; border-radius: 8px; line-height: 1; }
-    .btn-icon:hover { color: var(--danger); border-color: var(--danger); }
+    .btn-icon {
+        border: 0; background: transparent; color: var(--danger);
+        width: 26px; height: 26px; padding: 0;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 8px; line-height: 1; font-size: 15px;
+    }
+    .btn-icon:hover { background: rgba(179, 69, 46, .1); }
 </style>
 @endsection
 
@@ -97,7 +119,7 @@
                         @endif
                     </span>
                 </div>
-                <div class="card-body menu-scroll">
+                <div class="card-body menu-scroll" id="menu-grid">
                     @forelse($categories as $category)
                         @if($category->menuItems->isNotEmpty())
                             <div class="cat-label">{{ $category->name }} <span class="badge bg-light text-dark border">{{ $category->station }}</span></div>
@@ -150,19 +172,32 @@
         <div class="card shadow-sm" style="position: sticky; top: 20px;">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Current Order</span>
-                <span class="text-muted small fw-normal">{{ $order->items->sum('quantity') }} item{{ $order->items->sum('quantity') === 1 ? '' : 's' }}</span>
+                <span class="text-muted small fw-normal" id="order-item-count">{{ $order->items->sum('quantity') }} item{{ $order->items->sum('quantity') === 1 ? '' : 's' }}</span>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="order-ticket-body">
                 @forelse($order->items as $item)
-                    <div class="ticket-line">
-                        <span class="ticket-qty">{{ $item->quantity }}&times;</span>
+                    <div class="ticket-line"
+                         data-item-id="{{ $item->id }}"
+                         data-menu-item-id="{{ $item->menu_item_id }}"
+                         data-notes="{{ $item->notes }}"
+                         data-price="{{ $item->price }}"
+                         data-qty="{{ $item->quantity }}">
+                        @if(! in_array($order->status, ['paid', 'cancelled']))
+                            <div class="qty-stepper">
+                                <button type="button" class="qty-btn" data-dir="up" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
+                                <span class="qty-num" data-role="qty">{{ $item->quantity }}</span>
+                                <button type="button" class="qty-btn" data-dir="down" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                            </div>
+                        @else
+                            <span class="ticket-qty">{{ $item->quantity }}&times;</span>
+                        @endif
                         <div class="flex-grow-1">
                             <div class="ticket-name">{{ $item->menuItem->name }}</div>
-                            @if($item->notes)<div class="ticket-note">{{ $item->notes }}</div>@endif
+                            @if($item->notes)<div class="ticket-note"><i class="bi bi-sticky-fill"></i> {{ $item->notes }}</div>@endif
                             <div class="text-muted small">${{ number_format($item->price, 2) }} each</div>
                         </div>
                         <div class="text-end">
-                            <div class="ticket-sub">${{ number_format($item->subtotal(), 2) }}</div>
+                            <div class="ticket-sub" data-role="subtotal">${{ number_format($item->subtotal(), 2) }}</div>
                             @if(! in_array($order->status, ['paid', 'cancelled']))
                                 <form method="POST" action="{{ route('staff.orders.items.destroy', [$order, $item]) }}" data-confirm="Remove {{ $item->menuItem->name }}?" class="mt-1">
                                     @csrf @method('DELETE')
@@ -181,7 +216,7 @@
                 @if($order->items->isNotEmpty())
                     <div class="ticket-total">
                         <span class="text-uppercase small fw-bold text-muted" style="letter-spacing:.06em;">Total</span>
-                        <span class="amt">${{ number_format($order->total, 2) }}</span>
+                        <span class="amt" id="order-total-amt">${{ number_format($order->total, 2) }}</span>
                     </div>
                 @endif
             </div>
@@ -190,7 +225,7 @@
                 @if($order->status === 'open')
                     <form method="POST" action="{{ route('staff.orders.send', $order) }}">
                         @csrf
-                        <button class="btn btn-dark w-100 py-2" {{ $order->items->isEmpty() ? 'disabled' : '' }}>
+                        <button class="btn btn-dark w-100 py-2" id="send-to-kitchen-btn" {{ $order->items->isEmpty() ? 'disabled' : '' }}>
                             <i class="bi bi-send"></i> Send Order to Kitchen
                         </button>
                     </form>
@@ -210,4 +245,138 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+(function () {
+    const ticketBody = document.getElementById('order-ticket-body');
+    const menuGrid = document.getElementById('menu-grid');
+    const totalEl = document.getElementById('order-total-amt');
+    const countEl = document.getElementById('order-item-count');
+    const sendBtn = document.getElementById('send-to-kitchen-btn');
+    if (!ticketBody) return;
+
+    const csrf = document.querySelector('meta[name="csrf-token"]').content;
+    const ADD_URL = "{{ route('staff.orders.items.store', $order) }}";
+    const REMOVE_URL = (id) => "{{ route('staff.orders.items.destroy', [$order, '__ID__']) }}".replace('__ID__', id);
+    const ORDER_URL = "{{ route('staff.orders.show', $order) }}";
+    let syncSeq = 0;
+
+    const money = (n) => '$' + n.toFixed(2);
+
+    function recalcLocal() {
+        let total = 0, count = 0;
+        ticketBody.querySelectorAll('.ticket-line').forEach((line) => {
+            const qty = parseInt(line.dataset.qty, 10) || 0;
+            const price = parseFloat(line.dataset.price) || 0;
+            total += qty * price;
+            count += qty;
+            const qtyEl = line.querySelector('[data-role="qty"]');
+            const subEl = line.querySelector('[data-role="subtotal"]');
+            if (qtyEl) qtyEl.textContent = qty;
+            if (subEl) subEl.textContent = money(qty * price);
+        });
+        if (totalEl) totalEl.textContent = money(total);
+        if (countEl) countEl.textContent = count + ' item' + (count === 1 ? '' : 's');
+        if (sendBtn) sendBtn.disabled = ticketBody.querySelectorAll('.ticket-line').length === 0;
+    }
+
+    function request(url, body) {
+        return fetch(url, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrf, 'X-Requested-With': 'XMLHttpRequest' },
+            body: body || new URLSearchParams(),
+        });
+    }
+
+    async function syncTicket() {
+        const mySeq = ++syncSeq;
+        try {
+            const res = await fetch(ORDER_URL, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const html = await res.text();
+            if (mySeq !== syncSeq) return;
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const freshBody = doc.getElementById('order-ticket-body');
+            const freshCount = doc.getElementById('order-item-count');
+            if (freshCount && countEl) countEl.textContent = freshCount.textContent;
+            if (!freshBody) return;
+
+            const key = (el) => (el.dataset.menuItemId || '') + '::' + (el.dataset.notes || '');
+            const freshLines = Array.from(freshBody.querySelectorAll('.ticket-line'));
+            const consumed = new Set();
+
+            // Update existing lines in place — never move them — matched by dish + notes,
+            // not by server id (which changes when a line is recreated on qty change).
+            ticketBody.querySelectorAll('.ticket-line').forEach((line) => {
+                const match = freshLines.find((fl) => key(fl) === key(line));
+                if (!match) { line.remove(); return; }
+                consumed.add(match);
+                // Copy every data-* attribute (item id, qty, price, notes) from the server's
+                // current version of this line, then swap the inner markup wholesale so the
+                // delete form's action="..." always points at the live item id.
+                Array.from(match.attributes).forEach((attr) => {
+                    if (attr.name.startsWith('data-')) line.setAttribute(attr.name, attr.value);
+                });
+                line.innerHTML = match.innerHTML;
+            });
+
+            // Brand-new lines (added from the menu grid) get appended at the end, in order.
+            freshLines.forEach((fl) => {
+                if (!consumed.has(fl)) ticketBody.appendChild(fl.cloneNode(true));
+            });
+
+            // Refresh the "no items" placeholder / TOTAL footer (non-line children), kept last.
+            Array.from(ticketBody.children)
+                .filter((el) => !el.classList.contains('ticket-line'))
+                .forEach((el) => el.remove());
+            Array.from(freshBody.children)
+                .filter((el) => !el.classList.contains('ticket-line'))
+                .forEach((el) => ticketBody.appendChild(el.cloneNode(true)));
+
+            if (sendBtn) sendBtn.disabled = ticketBody.querySelectorAll('.ticket-line').length === 0;
+        } catch (e) { /* keep optimistic UI if the background sync fails */ }
+    }
+
+    ticketBody.addEventListener('click', async function (e) {
+        const btn = e.target.closest('.qty-btn');
+        if (!btn) return;
+        const line = btn.closest('.ticket-line');
+        const itemId = line.dataset.itemId;
+        const notes = line.dataset.notes || '';
+        let qty = (parseInt(line.dataset.qty, 10) || 0) + (btn.dataset.dir === 'up' ? 1 : -1);
+
+        line.querySelectorAll('.qty-btn').forEach((b) => (b.disabled = true));
+
+        if (qty <= 0) {
+            line.dataset.qty = 0;
+            line.remove();
+            recalcLocal();
+            await request(REMOVE_URL(itemId), new URLSearchParams({ _method: 'DELETE' }));
+            await syncTicket();
+            return;
+        }
+
+        line.dataset.qty = qty;
+        recalcLocal();
+
+        await request(REMOVE_URL(itemId), new URLSearchParams({ _method: 'DELETE' }));
+        await request(ADD_URL, new URLSearchParams({ menu_item_id: line.dataset.menuItemId, quantity: qty, notes }));
+        await syncTicket();
+    });
+
+    if (menuGrid) {
+        menuGrid.addEventListener('submit', async function (e) {
+            const form = e.target.closest('form.dish');
+            if (!form) return;
+            e.preventDefault();
+            const btn = form.querySelector('button[type="submit"]');
+            if (btn) btn.disabled = true;
+            await request(form.action, new FormData(form));
+            await syncTicket();
+            if (btn) btn.disabled = false;
+        });
+    }
+})();
+</script>
 @endsection

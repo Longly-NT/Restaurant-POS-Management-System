@@ -56,6 +56,7 @@
 
     <div class="col-md-8">
         <div class="card shadow-sm">
+            <div class="card-header">Menu Items</div>
             <div class="table-responsive">
                 <table class="table mb-0 align-middle">
                     <thead class="table-light">
@@ -66,9 +67,9 @@
                             <tr>
                                 <td>
                                     @if($item->image)
-                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                                     @else
-                                        <div style="width: 50px; height: 50px; background-color: #e9ecef; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                        <div style="width: 50px; height: 50px; background-color: var(--leaf-tint); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;">
                                             <small class="text-muted">No image</small>
                                         </div>
                                     @endif
@@ -82,14 +83,14 @@
                                 <td>
                                     <form action="{{ route('admin.menu-items.toggle', $item) }}" method="POST">
                                         @csrf @method('PATCH')
-                                        <button class="btn btn-sm {{ $item->is_available ? 'btn-success' : 'btn-secondary' }}">
+                                        <button class="btn btn-sm {{ $item->is_available ? 'btn-success' : 'btn-outline-secondary' }}">
                                             {{ $item->is_available ? 'Available' : 'Unavailable' }}
                                         </button>
                                     </form>
                                 </td>
                                 @if(auth()->user()->role == 'admin')
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">
+                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">
                                             Edit
                                         </button>
                                         <form action="{{ route('admin.menu-items.destroy', $item) }}" method="POST" style="display:inline;" data-confirm="Remove this item?">
@@ -137,7 +138,7 @@
                                                     <label class="form-label">Image</label>
                                                     @if($item->image)
                                                         <div class="mb-2">
-                                                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+                                                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 100px; height: 100px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border);">
                                                         </div>
                                                     @endif
                                                     <input type="file" name="image" class="form-control" accept="image/*">
@@ -145,7 +146,8 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                
                                                 <button type="submit" class="btn btn-primary">Update Item</button>
                                             </div>
                                         </form>

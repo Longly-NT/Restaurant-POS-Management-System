@@ -37,6 +37,7 @@
 
     <div class="col-md-7">
         <div class="card shadow-sm">
+            <div class="card-header">Categories</div>
             <div class="table-responsive">
                 <table class="table mb-0 align-middle">
                     <thead class="table-light">
