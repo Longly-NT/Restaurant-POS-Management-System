@@ -28,7 +28,7 @@
                             @if(auth()->user()->role == 'admin')
                                 <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                             @endif
-                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Remove this user?')">
+                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline" data-confirm="Remove this user?">
                                 @csrf @method('DELETE')
                                 @if(auth()->user()->role == 'admin')
                                     <button class="btn btn-sm btn-outline-danger">Delete</button>

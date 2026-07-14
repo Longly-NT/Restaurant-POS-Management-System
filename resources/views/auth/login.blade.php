@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Sign in · Restaurant POS')
+@section('title', 'Sign in · Angkor Khmer Cuisine')
 
 @section('styles')
 <style>
@@ -132,9 +132,27 @@
 @section('content')
 <div class="auth-wrap">
     <aside class="auth-brand">
-        <div class="d-flex align-items-center gap-3">
-            <div class="auth-monogram">V</div>
-            <span class="fw-bold" style="letter-spacing:-.01em;">Verdé&nbsp;POS</span>
+         <div class="d-flex align-items-center gap-3">
+            <div class="auth-monogram" style="background:transparent;border:0;">
+                <svg viewBox="0 0 100 100" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="47" fill="none" stroke="var(--brass)" stroke-width="3"/>
+                    <circle cx="50" cy="50" r="40" fill="#5A8567"/>
+                    <g fill="var(--brass)">
+                        <rect x="46" y="30" width="8" height="22"/>
+                        <rect x="30" y="38" width="7" height="14"/>
+                        <rect x="63" y="38" width="7" height="14"/>
+                        <rect x="20" y="44" width="6" height="8"/>
+                        <rect x="74" y="44" width="6" height="8"/>
+                        <polygon points="50,16 54,26 46,26"/>
+                        <polygon points="33.5,26 37,34 30,34"/>
+                        <polygon points="66.5,26 70,34 63,34"/>
+                        <polygon points="23,32 26,39 20,39"/>
+                        <polygon points="77,32 80,39 74,39"/>
+                        <rect x="18" y="52" width="64" height="4"/>
+                    </g>
+                </svg>
+            </div>
+            <span class="fw-bold" style="letter-spacing:.04em;">ANGKOR <span style="font-weight:500;opacity:.85;">KHMER CUISINE</span></span>
         </div>
 
         <div>
@@ -157,7 +175,7 @@
         <div class="auth-card">
             <hr class="auth-rule">
             <h1>Welcome back</h1>
-            <p class="lede">Sign in to your Verdé POS account.</p>
+            <p class="lede">Sign in to your Angkor Khmer Cuisine account.</p>
 
             <form method="POST" action="{{ route('login') }}" id="loginForm">
                 @csrf

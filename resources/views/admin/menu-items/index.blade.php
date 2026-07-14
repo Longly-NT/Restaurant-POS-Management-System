@@ -92,7 +92,7 @@
                                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $item->id }}">
                                             Edit
                                         </button>
-                                        <form action="{{ route('admin.menu-items.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('Remove this item?')">
+                                        <form action="{{ route('admin.menu-items.destroy', $item) }}" method="POST" style="display:inline;" data-confirm="Remove this item?">
                                             @csrf @method('DELETE')
                                             <button class="btn btn-sm btn-outline-danger">Delete</button>
                                         </form>

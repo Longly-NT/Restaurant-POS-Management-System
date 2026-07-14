@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Restaurant POS')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Angkor Khmer Cuisine')</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +32,11 @@
             --shadow-md: 0 8px 24px rgba(31, 41, 24, .08);
         }
 
+        @view-transition { navigation: auto; }
         * { box-sizing: border-box; }
+
+        @keyframes pageFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .app-content, .guest-shell { animation: pageFadeIn .35s ease both; }
 
         body {
             background-color: var(--bg);
@@ -83,10 +88,11 @@
             text-decoration: none;
             font-size: 10.5px; font-weight: 600;
             letter-spacing: .01em;
-            transition: background-color .15s ease, color .15s ease;
+            transition: background-color .18s ease, color .18s ease, transform .18s ease;
         }
-        .app-sidebar .nav-rail a svg { width: 21px; height: 21px; }
-        .app-sidebar .nav-rail a:hover { color: #fff; background: rgba(255,255,255,.08); }
+        .app-sidebar .nav-rail a svg { width: 21px; height: 21px; transition: transform .18s ease; }
+        .app-sidebar .nav-rail a:hover { color: #fff; background: rgba(255,255,255,.08); transform: translateY(-2px); }
+        .app-sidebar .nav-rail a:hover svg { transform: scale(1.08); }
         .app-sidebar .nav-rail a.active { color: var(--leaf-darker); background: #fff; }
         .app-sidebar .rail-spacer { flex: 1; }
         .app-sidebar .rail-foot { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -188,7 +194,25 @@
 @auth
 <div class="app-shell">
     <nav class="app-sidebar">
-        <div class="brand">V</div>
+        <div class="brand" style="background:transparent;">
+            <svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="47" fill="none" stroke="#C9A24B" stroke-width="3"/>
+                <circle cx="50" cy="50" r="40" fill="#5A8567"/>
+                <g fill="#C9A24B">
+                    <rect x="46" y="30" width="8" height="22"/>
+                    <rect x="30" y="38" width="7" height="14"/>
+                    <rect x="63" y="38" width="7" height="14"/>
+                    <rect x="20" y="44" width="6" height="8"/>
+                    <rect x="74" y="44" width="6" height="8"/>
+                    <polygon points="50,16 54,26 46,26"/>
+                    <polygon points="33.5,26 37,34 30,34"/>
+                    <polygon points="66.5,26 70,34 63,34"/>
+                    <polygon points="23,32 26,39 20,39"/>
+                    <polygon points="77,32 80,39 74,39"/>
+                    <rect x="18" y="52" width="64" height="4"/>
+                </g>
+            </svg>
+        </div>
 
         <ul class="nav-rail">
             @if(auth()->user()->isAdmin() || auth()->user()->isManager())
@@ -258,7 +282,7 @@
     <div class="app-main">
         <div class="app-topbar">
             <div>
-                <h5 class="mb-0">@yield('title', 'Restaurant POS')</h5>
+                <h5 class="mb-0">@yield('title', 'Angkor Khmer Cuisine')</h5>
             </div>
             <div class="d-flex align-items-center gap-3">
                 <span class="role-pill">{{ auth()->user()->role }}</span>
@@ -316,7 +340,50 @@
     </div>
 @endauth
 
+<div class="modal fade" id="confirmModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: var(--radius); border: none; box-shadow: var(--shadow-md);">
+      <div class="modal-body text-center pt-4 pb-2">
+        <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:48px;height:48px;border-radius:50%;background:#FBEAE5;color:var(--danger);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M4 7h16M9 7V4.5A1.5 1.5 0 0110.5 3h3A1.5 1.5 0 0115 4.5V7m2 0v12a2 2 0 01-2 2H9a2 2 0 01-2-2V7"/><path d="M10 11v6M14 11v6"/></svg>
+        </div>
+        <p class="mb-0 fw-semibold" id="confirmModalMessage" style="font-size:14.5px;"></p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center pb-4">
+        <button type="button" class="btn btn-outline-secondary btn-sm px-3" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-outline-danger btn-sm px-3" id="confirmModalOk">Yes, Remove</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+(function () {
+    const modalEl = document.getElementById('confirmModal');
+    if (!modalEl) return;
+    const modal = new bootstrap.Modal(modalEl);
+    const msgEl = document.getElementById('confirmModalMessage');
+    const okBtn = document.getElementById('confirmModalOk');
+    let pendingForm = null;
+
+    document.querySelectorAll('form[data-confirm]').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            if (form.dataset.confirmed === 'true') return;
+            e.preventDefault();
+            pendingForm = form;
+            msgEl.textContent = form.dataset.confirm;
+            modal.show();
+        });
+    });
+
+    okBtn.addEventListener('click', function () {
+        if (pendingForm) { pendingForm.dataset.confirmed = 'true'; modal.hide(); pendingForm.submit(); }
+    });
+})();
+</script>
+
 @yield('scripts')
 </body>
 </html>

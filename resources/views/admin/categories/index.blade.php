@@ -65,7 +65,7 @@
 
                                 @if(auth()->user()->role == 'admin')
                                     <td class="text-end">
-                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Delete category and its menu items?')">
+                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" data-confirm="Delete category and its menu items?">
                                             @csrf @method('DELETE')
                                             <button class="btn btn-sm btn-outline-danger">Delete</button>
                                         </form>

@@ -164,7 +164,7 @@
                         <div class="text-end">
                             <div class="ticket-sub">${{ number_format($item->subtotal(), 2) }}</div>
                             @if(! in_array($order->status, ['paid', 'cancelled']))
-                                <form method="POST" action="{{ route('staff.orders.items.destroy', [$order, $item]) }}" onsubmit="return confirm('Remove {{ $item->menuItem->name }}?')" class="mt-1">
+                                <form method="POST" action="{{ route('staff.orders.items.destroy', [$order, $item]) }}" data-confirm="Remove {{ $item->menuItem->name }}?" class="mt-1">
                                     @csrf @method('DELETE')
                                     <button class="btn-icon" title="Remove"><i class="bi bi-trash"></i></button>
                                 </form>
