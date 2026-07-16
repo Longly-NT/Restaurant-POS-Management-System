@@ -8,7 +8,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -44,7 +44,7 @@
         body {
             background-color: var(--bg);
             color: var(--ink);
-            font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             letter-spacing: -.01em;
         }
 
@@ -56,7 +56,7 @@
 
         /* ---------- Sidebar ---------- */
         .app-sidebar {
-            width: 84px;
+            width: 104px;
             flex-shrink: 0;
             background: linear-gradient(180deg, var(--leaf-dark), var(--leaf-darker));
             display: flex;
@@ -85,15 +85,15 @@
         .app-sidebar .nav-rail a {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 4px;
-            width: 64px; padding: 9px 4px 8px;
+            width: 80px; padding: 9px 4px 8px;
             border-radius: var(--radius-sm);
             color: rgba(255,255,255,.62);
             text-decoration: none;
-            font-size: 10.5px; font-weight: 600;
+            font-size: 12px; font-weight: 600;
             letter-spacing: .01em;
             transition: background-color .18s ease, color .18s ease, transform .18s ease;
         }
-        .app-sidebar .nav-rail a svg { width: 21px; height: 21px; transition: transform .18s ease; }
+        .app-sidebar .nav-rail a svg { width: 27px; height: 27px; transition: transform .18s ease; }
         .app-sidebar .nav-rail a:hover { color: #fff; background: rgba(255,255,255,.08); transform: translateY(-2px); }
         .app-sidebar .nav-rail a:hover svg { transform: scale(1.08); }
         .app-sidebar .nav-rail a.active { color: var(--leaf-darker); background: #fff; }
@@ -197,11 +197,30 @@
         }
         .form-label { font-weight: 600; font-size: 13.5px; color: var(--ink); }
 
+        .table { margin-bottom: 0; }
         .table thead.table-light th {
             background: var(--leaf-tint);
             color: var(--leaf-dark);
-            font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em;
+            font-size: 13.5px; text-transform: uppercase; letter-spacing: .05em;
             border-bottom: none;
+            padding: 14px 16px;
+        }
+        .table td {
+            padding: 13px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border);
+            font-size: 13.5px;
+            color: var(--ink);
+        }
+        .table td:first-child { font-weight: 600; }
+        .table tbody tr:last-child td { border-bottom: none; }
+        .table tbody tr { transition: background-color .15s ease; }
+        .table tbody tr:hover { background-color: var(--bg); }
+        .table .badge {
+            border-radius: 999px;
+            padding: 5px 12px;
+            font-weight: 600;
+            font-size: 11px;
         }
 
         .badge.bg-success { background-color: var(--success) !important; }
@@ -218,6 +237,7 @@
             position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
             z-index: 1080; width: min(92vw, 480px);
         }
+
 
         /* ---------- Legacy classes kept for staff/tables/index.blade.php ---------- */
         .card-table { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }

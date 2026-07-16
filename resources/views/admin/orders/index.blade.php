@@ -16,7 +16,7 @@
 </div>
 
 <div class="card shadow-sm">
-    <div class="table-responsive">
+    <div class="table-responsive" style="border-radius: var(--radius); overflow: hidden;">
         <table class="table mb-0 align-middle">
             <thead class="table-light">
                 <tr><th>#</th><th>Table</th><th>Staff</th><th>Status</th><th>Total</th><th>Created</th><th></th></tr>
@@ -27,7 +27,16 @@
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->diningTable->name }}</td>
                         <td>{{ $order->user->name }}</td>
-                        <td><span class="badge bg-secondary text-uppercase">{{ str_replace('_',' ',$order->status) }}</span></td>
+                        <td><span class="badge {{ match($order->status) {
+    'open' => 'bg-secondary',
+    'sent_to_kitchen' => 'bg-warning',
+    'accepted' => 'bg-warning',
+    'preparing' => 'bg-warning',
+    'finished' => 'bg-info',
+    'served' => 'bg-success',
+    'paid' => 'bg-dark',
+    default => 'bg-secondary',
+} }} text-uppercase">{{ str_replace('_',' ',$order->status) }}</span></td>
                         <td>${{ number_format($order->total, 2) }}</td>
                         <td>{{ $order->created_at->format('M d, H:i') }}</td>
                         <td class="text-end"><a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-outline-dark">View</a></td>
