@@ -12,7 +12,7 @@
     <div class="col-md-7">
         <div class="card shadow-sm mb-3">
             <div class="card-header">Items</div>
-            <div class="table-responsive">
+            <div class="table-responsive" style="border-radius: var(--radius); overflow: hidden;">
                 <table class="table mb-0 align-middle">
                     <thead class="table-light">
                         <tr><th>Item</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>

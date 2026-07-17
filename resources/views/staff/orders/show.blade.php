@@ -95,7 +95,14 @@
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h3 class="mb-1">{{ $order->diningTable->name }} <span class="text-muted fw-normal">· Order #{{ $order->id }}</span></h3>
-        <span class="badge bg-secondary text-uppercase" style="letter-spacing:.04em;">{{ str_replace('_',' ', $order->status) }}</span>
+        <span class="badge {{ match($order->status) {
+    'open' => 'bg-secondary',
+    'sent_to_kitchen', 'accepted', 'preparing' => 'bg-warning',
+    'finished' => 'bg-info',
+    'served' => 'bg-success',
+    'paid' => 'bg-dark',
+    default => 'bg-secondary',
+} }} text-uppercase" style="letter-spacing:.04em;">{{ str_replace('_',' ', $order->status) }}</span>
     </div>
     <div class="d-flex gap-2">
         <a href="{{ route('staff.tables.index') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Tables</a>
