@@ -114,7 +114,8 @@
 
 <div class="row g-4">
     <div class="col-lg-7">
-        @if(! in_array($order->status, ['paid', 'cancelled']))
+        @php($menuEditable = in_array($order->status, ['open', 'sent_to_kitchen']))
+        @if($menuEditable)
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Menu</span>
@@ -148,7 +149,12 @@
                                                 <div>
                                                     <div class="dish-name">{{ $menuItem->name }}</div>
                                                     @if($menuItem->description)
-                                                        <div class="dish-desc">{{ \Illuminate\Support\Str::limit($menuItem->description, 60) }}</div>
+                                                        <div class="dish-desc">{{ \Illuminate\Support\Str::limit(strip_tags($menuItem->description), 60) }}</div>
+                                                    @endif
+                                                    @if($menuItem->allergy_info)
+                                                        <div class="small text-danger fw-semibold">
+                                                            <i class="bi bi-exclamation-triangle-fill"></i> {{ $menuItem->allergy_info }}
+                                                        </div>
                                                     @endif
                                                 </div>
                                                 <div class="stepper">
@@ -170,6 +176,14 @@
                     @endforelse
                 </div>
             </div>
+        @elseif(! in_array($order->status, ['paid', 'cancelled']))
+            <div class="alert alert-warning d-flex align-items-center gap-2 mb-0">
+                <i class="bi bi-lock-fill fs-5"></i>
+                <div>
+                    <div class="fw-semibold">Menu locked</div>
+                    <div class="small">The kitchen is already working on this order, so items can no longer be added or removed. Start a new order for the table if the guest needs something else.</div>
+                </div>
+            </div>
         @else
             <div class="alert alert-secondary">This order is {{ $order->status }} and can no longer be changed.</div>
         @endif
@@ -189,7 +203,7 @@
                          data-notes="{{ $item->notes }}"
                          data-price="{{ $item->price }}"
                          data-qty="{{ $item->quantity }}">
-                        @if(! in_array($order->status, ['paid', 'cancelled']))
+                        @if($menuEditable)
                             <div class="qty-stepper">
                                 <button type="button" class="qty-btn" data-dir="up" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
                                 <span class="qty-num" data-role="qty">{{ $item->quantity }}</span>
@@ -205,7 +219,7 @@
                         </div>
                         <div class="text-end">
                             <div class="ticket-sub" data-role="subtotal">${{ number_format($item->subtotal(), 2) }}</div>
-                            @if(! in_array($order->status, ['paid', 'cancelled']))
+                            @if($menuEditable)
                                 <form method="POST" action="{{ route('staff.orders.items.destroy', [$order, $item]) }}" data-confirm="Remove {{ $item->menuItem->name }}?" class="mt-1">
                                     @csrf @method('DELETE')
                                     <button class="btn-icon" title="Remove"><i class="bi bi-trash"></i></button>

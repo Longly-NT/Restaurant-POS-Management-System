@@ -86,8 +86,11 @@ class OrderController extends Controller
 
         $order->recalculateTotal();
 
-        // If the order was already sent, staff is adding extra items mid-service.
-        // Re-fire the ticket straight to the kitchen — no chef approval needed.
+        // If the order was already sent (but the kitchen hasn't accepted it yet),
+        // staff is adding extra items mid-service. Re-fire the ticket straight to
+        // the kitchen — no chef approval needed. Once the kitchen has accepted the
+        // ticket or started cooking it, guardOpenForItems() above already stopped
+        // us from getting this far.
         if ($order->status !== 'open') {
             $order->update([
                 'status' => 'sent_to_kitchen',
@@ -147,11 +150,18 @@ class OrderController extends Controller
     }
 
     /**
-     * Items may be added/removed for the whole life of the order until it is
-     * settled — staff can keep ordering more even after it has gone to the kitchen.
+     * Items may be added/removed while the order is still open, or while it has
+     * just been fired to the kitchen but not yet picked up. Once the kitchen has
+     * accepted the ticket (status: accepted) or started cooking it (status:
+     * preparing) — and for every status after that — the menu is locked so the
+     * ticket in the kitchen always matches what staff see on screen.
      */
     protected function guardOpenForItems(Order $order): void
     {
-        abort_if(in_array($order->status, ['paid', 'cancelled']), 422, 'This order is closed.');
+        abort_unless(
+            in_array($order->status, ['open', 'sent_to_kitchen']),
+            422,
+            'This order is already being prepared in the kitchen and can no longer be edited.'
+        );
     }
 }

@@ -64,7 +64,8 @@
                                 @if($payment->tip_amount > 0) &middot; Tip ${{ number_format($payment->tip_amount, 2) }} @endif
                                 @if($payment->discount_amount > 0)
                                     &middot; <span class="text-danger">Discount
-                                        −${{ number_format($payment->discount_amount, 2) }}</span>
+                                        {{ rtrim(rtrim(number_format($payment->discount_percent, 2), '0'), '.') }}%
+                                        (−${{ number_format($payment->discount_amount, 2) }})</span>
                                     ({{ $payment->discount_reason }}, approved by {{ $payment->discountAuthorizedBy->name ?? '—' }})
                                 @endif
                             </div>
@@ -107,9 +108,14 @@
 
                             <div id="discountFields" class="d-none border rounded p-3 mb-3 bg-light">
                                 <div class="mb-2">
-                                    <label class="form-label">Discount amount ($)</label>
-                                    <input type="number" step="0.01" min="0" name="discount_amount" id="discountInput"
-                                        class="form-control" value="{{ old('discount_amount', 0) }}">
+                                    <label class="form-label">Discount (%)</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.01" min="0" max="100" name="discount_percent"
+                                            id="discountInput" class="form-control"
+                                            value="{{ old('discount_percent', 0) }}">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <small class="text-muted" id="discountAmountPreview"></small>
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">Reason</label>
@@ -154,10 +160,17 @@
         function updatePreview() {
             const amount = parseFloat(document.getElementById('amountInput').value) || 0;
             const tip = parseFloat(document.getElementById('tipInput').value) || 0;
-            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const discountPercent = Math.min(parseFloat(document.getElementById('discountInput').value) || 0, 100);
+            const discount = amount * (discountPercent / 100);
             const taxable = Math.max(amount - discount, 0);
             const tax = taxable * taxRate;
             const total = amount - discount + tax + tip;
+
+            const discountPreviewEl = document.getElementById('discountAmountPreview');
+            if (discountPreviewEl) {
+                discountPreviewEl.textContent = discount > 0 ? ('= -$' + discount.toFixed(2) + ' off') : '';
+            }
+
             document.getElementById('totalPreview').textContent = '$' + total.toFixed(2);
         }
 

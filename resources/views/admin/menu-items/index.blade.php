@@ -35,7 +35,13 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Description</label>
-                                <textarea name="description" class="form-control" rows="2"></textarea>
+                                <x-rich-text-editor name="description" id="add_description" :value="old('description')" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Allergy / Dietary Info</label>
+                                <textarea name="allergy_info" class="form-control" rows="2"
+                                    placeholder="e.g. Contains peanuts, dairy. Can be made gluten-free.">{{ old('allergy_info') }}</textarea>
+                                <small class="text-muted">Shown as a clear warning badge to guests and kitchen staff.</small>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Price ($)</label>
@@ -76,7 +82,16 @@
                                 </td>
                                 <td>
                                     <div class="fw-semibold">{{ $item->name }}</div>
-                                    <div class="text-muted small">{{ $item->description }}</div>
+                                    @if($item->description)
+                                        <div class="text-muted small">{!! $item->description !!}</div>
+                                    @endif
+                                    @if($item->allergy_info)
+                                        <div class="small mt-1">
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                                <i class="bi bi-exclamation-triangle-fill"></i> {{ $item->allergy_info }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td>{{ $item->category->name }}</td>
                                 <td>${{ number_format($item->price, 2) }}</td>
@@ -128,7 +143,13 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Description</label>
-                                                    <textarea name="description" class="form-control" rows="2">{{ $item->description }}</textarea>
+                                                    <x-rich-text-editor name="description" id="edit_description_{{ $item->id }}" :value="$item->description" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Allergy / Dietary Info</label>
+                                                    <textarea name="allergy_info" class="form-control" rows="2"
+                                                        placeholder="e.g. Contains peanuts, dairy. Can be made gluten-free.">{{ $item->allergy_info }}</textarea>
+                                                    <small class="text-muted">Shown as a clear warning badge to guests and kitchen staff.</small>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Price ($)</label>

@@ -16,9 +16,14 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     @foreach($order->items as $item)
-                        <li class="list-group-item d-flex justify-content-between">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
                             <span>{{ $item->quantity }}x {{ $item->menuItem->name }}
                                 <span class="badge bg-light text-dark">{{ $item->menuItem->category->station }}</span>
+                                @if($item->menuItem->allergy_info)
+                                    <div class="small text-danger fw-semibold mt-1">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> {{ $item->menuItem->allergy_info }}
+                                    </div>
+                                @endif
                             </span>
                         </li>
                     @endforeach
@@ -45,9 +50,14 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     @foreach($order->items as $item)
-                        <li class="list-group-item d-flex justify-content-between">
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
                             <span>{{ $item->quantity }}x {{ $item->menuItem->name }}
                                 <span class="badge bg-light text-dark">{{ $item->menuItem->category->station }}</span>
+                                @if($item->menuItem->allergy_info)
+                                    <div class="small text-danger fw-semibold mt-1">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> {{ $item->menuItem->allergy_info }}
+                                    </div>
+                                @endif
                             </span>
                         </li>
                     @endforeach

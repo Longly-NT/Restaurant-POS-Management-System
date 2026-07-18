@@ -8,7 +8,7 @@ class Payment extends Model
 {
     protected $fillable = [
     'order_id', 'subtotal_amount', 'tax_amount', 'tip_amount',
-    'discount_amount', 'discount_reason', 'discount_authorized_by',
+    'discount_amount', 'discount_percent', 'discount_reason', 'discount_authorized_by',
     'refund_amount', // add this line
     'total_amount', 'payment_method', 'processed_by',
     ];
@@ -18,6 +18,7 @@ class Payment extends Model
         'tax_amount' => 'decimal:2',
         'tip_amount' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'discount_percent' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'created_at' => 'datetime',
     ];
