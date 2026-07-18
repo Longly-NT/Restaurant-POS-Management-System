@@ -10,6 +10,7 @@ class MenuItem extends Model
         'category_id',
         'name',
         'description',
+        'allergy_info',
         'price',
         'image',
         'is_available',

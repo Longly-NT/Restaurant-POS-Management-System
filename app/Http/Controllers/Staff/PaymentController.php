@@ -22,12 +22,16 @@ class PaymentController extends Controller
             'amount' => ['required', 'numeric', 'min:0.01'],
             'method' => ['required', 'in:cash,card,mobile'],
             'tip_amount' => ['nullable', 'numeric', 'min:0'],
-            'discount_amount' => ['nullable', 'numeric', 'min:0'],
+            'discount_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'discount_reason' => ['nullable', 'string', 'max:255'],
         ]);
 
         $subtotal = $data['amount'];
-        $discount = $data['discount_amount'] ?? 0.00;
+        $discountPercent = $data['discount_percent'] ?? 0.00;
+        // Discounts are entered as a percentage (the common case) and resolved to
+        // a dollar amount here, so the rest of the money math — and reporting —
+        // keeps working the same way it always has.
+        $discount = round($subtotal * ($discountPercent / 100), 2);
         $tip = $data['tip_amount'] ?? 0.00;
 
         // 2. Calculate tax based on the subtotal minus discount (matching your blade JS preview logic)
@@ -42,6 +46,7 @@ class PaymentController extends Controller
         $order->payments()->create([
             'subtotal_amount' => $subtotal,
             'discount_amount' => $discount,
+            'discount_percent' => $discountPercent,
             'discount_reason' => $discount > 0 ? ($data['discount_reason'] ?? 'Staff discount') : null,
             'tax_amount'      => $tax,
             'tip_amount'      => $tip,

@@ -10,6 +10,24 @@ use Illuminate\Support\Facades\Storage;
 
 class MenuItemController extends Controller
 {
+    /**
+     * The description field is edited with a small rich-text toolbar (bold,
+     * italic, underline, bullet/numbered lists). Strip everything down to that
+     * whitelist before it ever touches the database, so no other HTML/JS can
+     * be injected through the field.
+     */
+    protected function sanitizeDescription(?string $html): ?string
+    {
+        if ($html === null) {
+            return null;
+        }
+
+        $allowedTags = '<b><strong><i><em><u><ul><ol><li><br><p>';
+        $clean = strip_tags($html, $allowedTags);
+
+        return trim($clean) === '' ? null : $clean;
+    }
+
     public function index()
     {
         $menuItems = MenuItem::with('category')->latest()->get();
@@ -24,10 +42,12 @@ class MenuItemController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'allergy_info' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
 
+        $data['description'] = $this->sanitizeDescription($data['description'] ?? null);
         $data['is_available'] = true;
 
         if ($request->hasFile('image')) {
@@ -46,9 +66,12 @@ class MenuItemController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'allergy_info' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ]);
+
+        $data['description'] = $this->sanitizeDescription($data['description'] ?? null);
 
         if ($request->hasFile('image')) {
             // Delete old image if it exists
