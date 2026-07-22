@@ -50,7 +50,7 @@
                             <div class="mb-3">
                                 <label class="form-label">Image</label>
                                 <input type="file" name="image" class="form-control" accept="image/*">
-                                <small class="text-muted">Supported: JPEG, PNG, GIF (Max 2MB)</small>
+                                <small class="text-muted">Supported: JPEG, PNG, JPG , GIF, WEBP (Max 10MB)</small>
                             </div>
                             <button class="btn btn-dark">Add Item</button>
                         </form>
@@ -163,7 +163,7 @@
                                                         </div>
                                                     @endif
                                                     <input type="file" name="image" class="form-control" accept="image/*">
-                                                    <small class="text-muted">Supported: JPEG, PNG, GIF (Max 2MB)</small>
+                                                    <small class="text-muted">Supported: JPEG, PNG, JPG, GIF, WEBP (Max 10MB)</small>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">

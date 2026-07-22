@@ -149,7 +149,7 @@
                                                 <div>
                                                     <div class="dish-name">{{ $menuItem->name }}</div>
                                                     @if($menuItem->description)
-                                                        <div class="dish-desc">{{ \Illuminate\Support\Str::limit(strip_tags($menuItem->description), 60) }}</div>
+                                                        <div class="dish-desc">{!! \Illuminate\Support\Str::limit(strip_tags($menuItem->description, '<b><strong><i><em><u><ul><ol><li><br><p>'), 60) !!}</div>
                                                     @endif
                                                     @if($menuItem->allergy_info)
                                                         <div class="small text-danger fw-semibold">

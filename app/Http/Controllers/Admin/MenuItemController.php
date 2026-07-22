@@ -44,7 +44,7 @@ class MenuItemController extends Controller
             'description' => ['nullable', 'string'],
             'allergy_info' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'],
         ]);
 
         $data['description'] = $this->sanitizeDescription($data['description'] ?? null);
@@ -80,7 +80,7 @@ class MenuItemController extends Controller
                     Storage::disk('public')->delete($menuItem->image);
                 } catch (\Exception $e) {
                     // Log but don't fail if old image can't be deleted
-                    \Log::warning('Failed to delete old image: ' . $e->getMessage());
+                    Log::warning('Failed to delete old image: ' . $e->getMessage());
                 }
             }
             // Store new image
@@ -107,7 +107,7 @@ class MenuItemController extends Controller
                 Storage::disk('public')->delete($menuItem->image);
             } catch (\Exception $e) {
                 // Log but don't fail if image can't be deleted
-                \Log::warning('Failed to delete image: ' . $e->getMessage());
+                Log::warning('Failed to delete image: ' . $e->getMessage());
             }
         }
         $menuItem->delete();

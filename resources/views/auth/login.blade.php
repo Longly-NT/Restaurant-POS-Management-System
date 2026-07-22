@@ -64,6 +64,7 @@
         text-wrap: balance;
         max-width: 12ch;
         margin: 0;
+        color: white;
     }
     .auth-headline em { color: var(--brass-soft); font-style: normal; }
     .auth-sub {

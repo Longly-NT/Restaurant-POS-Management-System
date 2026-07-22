@@ -57,18 +57,48 @@ class DatabaseSeeder extends Seeder
         $drinks = Category::create(['name' => 'Drinks', 'station' => 'bar']);
         $desserts = Category::create(['name' => 'Desserts', 'station' => 'kitchen']);
 
-        $items = [
-            [$starters, 'Spring Rolls', 4.50, 'spring-rolls.jpg'],
-            [$starters, 'Garlic Bread', 3.50, 'garlic-bread.jpg'],
-            [$mains, 'Grilled Chicken', 12.00, 'grilled-chicken.jpg'],
-            [$mains, 'Beef Burger', 10.50, 'beef-burger.jpg'],
-            [$mains, 'Margherita Pizza', 9.50, 'margherita-pizza.jpg'],
-            [$drinks, 'Coca-Cola', 2.00, 'coca-cola.jpg'],
-            [$drinks, 'Orange Juice', 2.50, 'orange-juice.jpg'],
-            [$drinks, 'Mojito', 6.00, 'mojito.jpg'],
-            [$desserts, 'Chocolate Cake', 5.00, 'chocolate-cake.jpg'],
-            [$desserts, 'Ice Cream', 3.00, 'ice-cream.jpg'],
-        ];
+$items = [
+    // Starters
+    [$starters, "A-ping", 2.50, 'A-ping.jpg'],
+    [$starters, "Bok L'hong", 3.50, "Bok L'hong.jpg"],
+    [$starters, 'Chien Chuon', 3.00, 'Chien chuon.jpg'],
+    [$starters, 'Chrouk Svay', 3.00, 'Chrouk Svay.jpg'],
+    [$starters, 'Lap Khmer', 5.50, 'Lap Khmer.jpg'],
+    [$starters, 'Plea Sach Ko', 5.00, 'Plea sach ko.jpg'],
+    [$starters, 'Ngam Ngov', 3.50, 'ngam ngov.jpg'],
+
+    // Main Course
+    [$mains, 'Borbor', 3.50, 'Borbor.jpg'],
+    [$mains, 'Char Kdaw', 6.00, 'Char Kdaw.jpg'],
+    [$mains, 'Kampot Pepper Crab', 14.00, 'Kampot Pepper Crab.jpg'],
+    [$mains, 'Kuy Teav', 4.50, 'Kuy Teav.jpg'],
+    [$mains, 'Lok Lak', 8.50, 'Lok Lak.jpg'],
+    [$mains, 'Nom Banh Chok', 4.00, 'Nom Banh Chok.jpg'],
+    [$mains, 'Samlar Machu', 5.00, 'Samlar Machu.jpg'],
+    [$mains, 'Samlor Kako', 5.50, 'Samlor Kako.jpg'],
+    [$mains, "Somlar Kari", 6.00, 'Somlar Kari.jpg'],
+    [$mains, 'Somlar Machu', 5.00, 'Somlar Machu.jpg'],
+    [$mains, 'Amok', 7.50, 'Traditional-Cambodian-Dishes-To-Eat-Amok-1024x594.jpg'],
+    [$mains, 'Yaohon', 15.00, 'Yaohon.jpg'],
+    [$mains, 'Bai Sach Chrouk', 3.50, 'bai sach chrouk.jpg'],
+    [$mains, 'Meet Ketang', 2.00, 'Meet ketang.jpg'],
+
+    // Drinks
+    [$drinks, 'Tek Ombao', 1.50, 'Tek Ombao (Sugarcane Juice).jpg'],
+    [$drinks, 'Tikalok', 2.00, 'Tikalok.jpg'],
+    [$drinks, 'Kafe Tuk Dos Ko', 1.50, 'Kafe Tuk Dos Ko.jpg'],
+
+    // Desserts
+    [$desserts, 'Ansom Chek', 2.00, 'Ansom Chek.jpg'],
+    [$desserts, "Banh J'neurk", 2.00, "Banh J'neurk.jpg"],
+    [$desserts, 'Nhom Play Ai', 2.50, 'Nhom Play Ai.jpg'],
+    [$desserts, 'Nom Akor', 2.00, 'Nom Akor.jpg'],
+    [$desserts, 'Nom Korng', 2.00, 'Nom Korng.jpg'],
+    [$desserts, 'Nom Lort', 2.00, 'Nom Lort.jpg'],
+    [$desserts, 'Num Chak Kachan', 2.50, 'Num Chak Kachan.jpg'],
+    [$desserts, 'Sangkya Lpov', 2.50, 'sangkya lpov.jpg'],
+    [$desserts, 'Cha Houy Teuk', 2.00, 'Cha Houy Teuk.jpg'],
+];
 
         foreach ($items as [$category, $name, $price, $imageFile]) {
             $imagePath = null;
