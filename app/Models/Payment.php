@@ -7,14 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     protected $fillable = [
-    'order_id', 'subtotal_amount', 'tax_amount', 'tip_amount',
+    'order_id', 'subtotal_amount', 'tendered_amount', 'tax_amount', 'tip_amount',
     'discount_amount', 'discount_percent', 'discount_reason', 'discount_authorized_by',
-    'refund_amount', // add this line
+    'refund_amount',
     'total_amount', 'payment_method', 'processed_by',
     ];
 
     protected $casts = [
         'subtotal_amount' => 'decimal:2',
+        'tendered_amount' => 'decimal:2',
         'tax_amount' => 'decimal:2',
         'tip_amount' => 'decimal:2',
         'discount_amount' => 'decimal:2',
