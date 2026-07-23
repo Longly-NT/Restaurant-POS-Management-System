@@ -68,7 +68,7 @@ class MenuItemController extends Controller
             'description' => ['nullable', 'string'],
             'allergy_info' => ['nullable', 'string', 'max:1000'],
             'price' => ['required', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:10240'],
         ]);
 
         $data['description'] = $this->sanitizeDescription($data['description'] ?? null);
